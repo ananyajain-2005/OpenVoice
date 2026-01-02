@@ -2,7 +2,7 @@ import { db } from "../lib/db";
 import User from "../models/User";
 import generateToken from "@/app/utils/token";
 import nodemailer from "nodemailer";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import Message from "../models/message";
 import { NextResponse } from "next/server";
 
@@ -47,10 +47,10 @@ async function sendEmail(email, otp) {
 }
 
 // ====================== SIGNUP ======================
-export const Signup = async (req) => {
+export const Signup = async (body) => {
   try {
     await db();
-    const { userName, email, password } = await req.json();
+    const { userName, email, password } = body;
     const emailNormalized = email.toLowerCase().trim();
 
     const existingUser = await User.findOne({ email: emailNormalized });
@@ -64,7 +64,7 @@ export const Signup = async (req) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = generateOTP();
 
-    await User.create({
+      const user = await User.create({
       userName,
       email: emailNormalized,
       password: hashedPassword,
@@ -78,6 +78,7 @@ export const Signup = async (req) => {
     return new Response(
       JSON.stringify({
         message: "Signup successful. OTP sent to email.",
+        user: { email: user.email } 
       }),
       { status: 200 }
     );
