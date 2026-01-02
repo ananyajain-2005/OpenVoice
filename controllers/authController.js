@@ -197,7 +197,8 @@ export const sendMessage = async (req) =>{
     if(!userName||!message){
       return new Response(JSON.stringify({ error: "Required fields missing" }), { status: 400 });
     }
-     await Message.create({ userName, message });
+     const saved = await Message.create({userName: userName.toLowerCase(), message });
+     console.log("MESSAGE SAVED:", saved);
      return new Response(JSON.stringify({message:"Message sent successfully"}),{status:200});
  }catch(err){
     console.error("SendMessage Error:", err);
@@ -211,7 +212,7 @@ export const sendMessage = async (req) =>{
 export const getMessage = async(userName) =>{
   try{
     await db();
-    const messages = await Message.find({userName}).sort({createdAt:-1});
+    const messages = await Message.find({userName: userName.toLowerCase()}).sort({createdAt:-1});
     return NextResponse.json({ message: messages },{status:200});
   } catch (err) {
     console.error("FetchMessages Error:", err);
