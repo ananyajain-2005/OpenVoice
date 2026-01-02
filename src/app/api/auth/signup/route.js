@@ -1,10 +1,10 @@
 import { Signup } from "../../../../../controllers/authController";
-import {connectDB} from '../../../../../lib/db'
+import { db } from "../../../../../lib/db";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-     await connectDB();
+     await db();
     const body = await req.json();
     const result = await Signup(body);
     return result;
