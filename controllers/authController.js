@@ -11,7 +11,7 @@ const generateOTP = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
 
 // ------------------ SEND OTP EMAIL ------------------
-async function sendEmail(email, otp) {
+export async function sendEmail(email, otp) {
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
