@@ -14,17 +14,12 @@ const generateOTP = () =>
 async function sendEmail(email, otp) {
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
     });
-
-    await transporter.verify();
-    console.log("✅ SMTP Connected Successfully");
 
     await transporter.sendMail({
       from: `"OpenVoice" <${process.env.EMAIL_USER}>`,
@@ -45,6 +40,7 @@ async function sendEmail(email, otp) {
     throw new Error("Email sending failed");
   }
 }
+
 
 // ====================== SIGNUP ======================
 export const Signup = async (body) => {
