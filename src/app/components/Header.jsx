@@ -18,7 +18,7 @@ const Header = () => {
     router.replace("/"); // back par login na aaye
   };
   return (
-    <nav className="flex flex-col md:flex-row justify-between items-center bg-[#0B2E33] gap-2 px-35 py-4 text-white">
+    <nav className="flex flex-col md:flex-row justify-between items-center bg-[#0B2E33] gap-2 px-30 py-4 text-white">
       <h1 className="font-bold text-xl">OpenVoice</h1>
       {pathname === "/" && (
         <Link href="/login"><Button label="Login" variant="primary" /></Link>

@@ -45,6 +45,8 @@ export const Signup = async (body) => {
   try {
     await db();
     const { userName, email, password } = body;
+
+    const userNameNormalized = userName.toLowerCase().trim();
     const emailNormalized = email.toLowerCase().trim();
 
     const existingUser = await User.findOne({ email: emailNormalized });
@@ -54,12 +56,18 @@ export const Signup = async (body) => {
         { status: 400 }
       );
     }
-
+    const existingUserByUserName = await User.findOne({ userName: userNameNormalized });
+    if (existingUserByUserName) {
+      return new Response(
+        JSON.stringify({ error: "Username already taken" }),
+        { status: 400 }
+      );
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = generateOTP();
 
-      const user = await User.create({
-      userName,
+    const user = await User.create({
+      userName:userNameNormalized,
       email: emailNormalized,
       password: hashedPassword,
       otp,
@@ -72,7 +80,7 @@ export const Signup = async (body) => {
     return new Response(
       JSON.stringify({
         message: "Signup successful. OTP sent to email.",
-        user: { email: user.email } 
+        user: { email: user.email }
       }),
       { status: 200 }
     );
@@ -185,30 +193,30 @@ export const Login = async (req) => {
   }
 };
 
-export const sendMessage = async (req) =>{
- try{
+export const sendMessage = async (req) => {
+  try {
     await db();
-    const {userName,message} = await req.json();
-    if(!userName||!message){
+    const { userName, message } = await req.json();
+    if (!userName || !message) {
       return new Response(JSON.stringify({ error: "Required fields missing" }), { status: 400 });
     }
-     const saved = await Message.create({userName: userName.toLowerCase(), message });
-     console.log("MESSAGE SAVED:", saved);
-     return new Response(JSON.stringify({message:"Message sent successfully"}),{status:200});
- }catch(err){
+    const saved = await Message.create({ userName: userName.toLowerCase(), message });
+    console.log("MESSAGE SAVED:", saved);
+    return new Response(JSON.stringify({ message: "Message sent successfully" }), { status: 200 });
+  } catch (err) {
     console.error("SendMessage Error:", err);
     return new Response(
       JSON.stringify({ error: "Server error" }),
       { status: 500 }
     );
- }
+  }
 }
 
-export const getMessage = async(userName) =>{
-  try{
+export const getMessage = async (userName) => {
+  try {
     await db();
-    const messages = await Message.find({userName: userName.toLowerCase()}).sort({createdAt:-1});
-    return NextResponse.json({ message: messages },{status:200});
+    const messages = await Message.find({ userName: userName.toLowerCase() }).sort({ createdAt: -1 });
+    return NextResponse.json({ message: messages }, { status: 200 });
   } catch (err) {
     console.error("FetchMessages Error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
