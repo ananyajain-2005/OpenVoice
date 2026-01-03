@@ -20,7 +20,6 @@ async function sendEmail(email, otp) {
         pass: process.env.EMAIL_PASS,
       },
     });
-
     await transporter.sendMail({
       from: `"OpenVoice" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -40,7 +39,6 @@ async function sendEmail(email, otp) {
     throw new Error("Email sending failed");
   }
 }
-
 
 // ====================== SIGNUP ======================
 export const Signup = async (body) => {
